@@ -84,4 +84,10 @@ abstract class RepeatExtensionTestCase extends PHPUnit_Framework_TestCase
     {
         return $node->parentNode->removeChild($node);
     }
+
+    protected function assertDomEquals($expected, $actual)
+    {
+        $this->assertEqualXMLStructure(
+                $expected->documentElement, $actual->documentElement);
+    }
 }

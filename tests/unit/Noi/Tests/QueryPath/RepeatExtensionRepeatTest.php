@@ -16,7 +16,7 @@ class RepeatExtensionRepeatTest extends RepeatExtensionTestCase
         $this->repeater->repeat(0);
 
         // Assert
-        $this->assertEqualXMLStructure($expected->documentElement, $dom->documentElement);
+        $this->assertDomEquals($expected, $dom);
     }
 
     /** @test */
@@ -67,7 +67,7 @@ class RepeatExtensionRepeatTest extends RepeatExtensionTestCase
         $this->repeater->repeat($counter);
 
         // Assert
-        $this->assertEqualXMLStructure($expected->documentElement, $dom->documentElement);
+        $this->assertDomEquals($expected, $dom);
     }
 
     public function getTestCounters()
@@ -200,7 +200,6 @@ class RepeatExtensionRepeatTest extends RepeatExtensionTestCase
         $this->repeater->repeat($counter);
 
         // Assert
-        $this->assertEqualXMLStructure(
-                $this->createDOM('<root />')->documentElement, $dom->documentElement);
+        $this->assertDomEquals($this->createDOM('<root />'), $dom);
     }
 }
