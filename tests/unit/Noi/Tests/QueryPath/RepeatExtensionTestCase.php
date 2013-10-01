@@ -79,4 +79,9 @@ abstract class RepeatExtensionTestCase extends PHPUnit_Framework_TestCase
     {
         return new PHPUnit_Framework_Constraint_Count($count);
     }
+
+    protected function removeNode($node)
+    {
+        return $node->parentNode->removeChild($node);
+    }
 }

@@ -26,9 +26,10 @@ class RepeatExtension implements Extension
         foreach ($this->qp->get() as $templateNode) {
             $added = $this->repeatNode($templateNode, $counter, $callback);
             $repeated->addAll($added);
+
+            $this->removeNode($templateNode);
         }
 
-        $this->qp->remove();  // remove template nodes
         $this->qp->setMatches($repeated);
         return $this->qp;
     }
@@ -46,8 +47,11 @@ class RepeatExtension implements Extension
             if ($callback and (call_user_func($callback, $i, $ins) === false)) {
                 break;
             }
-            $templateNode->parentNode->insertBefore($ins, $templateNode);
-            $repeated->attach($templateNode->previousSibling);
+
+            if (isset($templateNode->parentNode)) {
+                $ins = $templateNode->parentNode->insertBefore($ins, $templateNode);
+            }
+            $repeated->attach($ins);
         }
         return $repeated;
     }
@@ -62,6 +66,13 @@ class RepeatExtension implements Extension
             return range(0, $counter - 1);
         } else {
             return array();
+        }
+    }
+
+    protected function removeNode($node)
+    {
+        if (isset($node->parentNode)) {
+            $node->parentNode->removeChild($node);
         }
     }
 }

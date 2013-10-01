@@ -6,12 +6,17 @@ class RepeatExtensionRepeatTest extends RepeatExtensionTestCase
     /** @test */
     public function RemovesSelectedElements_IfCounterIsZero()
     {
-        // Expect
-        $this->mockQueryPath->expects($this->once())
-                ->method('remove');
+        // Setup
+        $dom = $this->createDOM('<root><item>Test</item></root>');
+        $expected = $this->createDOM('<root></root>');
+
+        $this->setTargetNode($dom->getElementsByTagName('item'));
 
         // Act
         $this->repeater->repeat(0);
+
+        // Assert
+        $this->assertEqualXMLStructure($expected->documentElement, $dom->documentElement);
     }
 
     /** @test */
@@ -172,5 +177,30 @@ class RepeatExtensionRepeatTest extends RepeatExtensionTestCase
             array(array('a', 'b'), array('a', 'b')),
             array(new \ArrayIterator(range(1, 5)), array(1, 2, 3, 4, 5)),
         );
+    }
+
+    /** @test */
+    public function RepeatsRemovedNodes()
+    {
+        // Setup
+        $counter = 2;
+
+        $dom = $this->createDOM('<root><item>TEST</item></root>');
+        $removed = $this->removeNode($dom->getElementsByTagName('item')->item(0));
+
+        $this->setTargetNode(array($removed));
+
+        // Expect
+        $this->mockQueryPath->expects($this->once())
+                ->method('setMatches')->with($this->logicalAnd(
+                            $this->countOf($counter),
+                            $this->containsOnlyInstancesOf($removed)));
+
+        // Act
+        $this->repeater->repeat($counter);
+
+        // Assert
+        $this->assertEqualXMLStructure(
+                $this->createDOM('<root />')->documentElement, $dom->documentElement);
     }
 }
