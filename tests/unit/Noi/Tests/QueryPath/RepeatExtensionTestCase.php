@@ -79,7 +79,7 @@ abstract class RepeatExtensionTestCase extends PHPUnit_Framework_TestCase
 
     protected function assertDomEquals($expected, $actual)
     {
-        $this->assertEqualXMLStructure(
-                $expected->documentElement, $actual->documentElement);
+        $this->assertXmlStringEqualsXmlString(
+                $expected->saveXML(), $actual->saveXML());
     }
 }

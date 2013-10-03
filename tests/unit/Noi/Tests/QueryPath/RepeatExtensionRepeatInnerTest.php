@@ -3,12 +3,6 @@ namespace Noi\Tests\QueryPath;
 
 class RepeatExtensionRepeatInnerTest extends RepeatExtensionTestCase
 {
-    protected function assertDomEquals($expected, $actual)
-    {
-        $this->assertXmlStringEqualsXmlString(
-                $expected->saveXML(), $actual->saveXML());
-    }
-
     /** @test */
     public function RemovesAllChildNodes_IfCounterIsZero()
     {
