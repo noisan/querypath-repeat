@@ -34,6 +34,19 @@ class RepeatExtension implements Extension
         return $this->qp;
     }
 
+    public function repeatInner($counter, $callback = null)
+    {
+        foreach ($this->qp->get() as $templateNode) {
+            $repeated = $this->repeatNode($templateNode, $counter, $callback);
+
+            $this->removeChildren($templateNode);
+            foreach ($repeated as $node) {
+                $this->appendChildren($templateNode, $this->removeChildren($this->removeNode($node)));
+            }
+        }
+        return $this->qp;
+    }
+
     protected function repeatNode($templateNode, $counter, $callback = null)
     {
         if ($callback and !is_callable($callback)) {
@@ -72,7 +85,25 @@ class RepeatExtension implements Extension
     protected function removeNode($node)
     {
         if (isset($node->parentNode)) {
-            $node->parentNode->removeChild($node);
+            return $node->parentNode->removeChild($node);
+        } else {
+            return $node;
+        }
+    }
+
+    protected function removeChildren($node)
+    {
+        $removed = array();
+        while ($node->firstChild) {
+            $removed[] = $node->removeChild($node->firstChild);
+        }
+        return $removed;
+    }
+
+    protected function appendChildren($node, $children)
+    {
+        foreach ($children as $child) {
+            $node->appendChild($child);
         }
     }
 }
