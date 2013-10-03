@@ -43,14 +43,6 @@ abstract class RepeatExtensionTestCase extends PHPUnit_Framework_TestCase
                 ->method('get')
                 ->will($this->returnValue($nodeStorage));
 
-        $mock->expects($this->any())
-                ->method('remove')
-                ->will($this->returnCallback(function () use ($nodeStorage) {
-                    foreach ($nodeStorage as $node) {
-                        $node->parentNode->removeChild($node);
-                    }
-                }));
-
         return $mock;
     }
 
