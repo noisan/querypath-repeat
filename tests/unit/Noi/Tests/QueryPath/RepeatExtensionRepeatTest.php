@@ -149,6 +149,32 @@ class RepeatExtensionRepeatTest extends RepeatExtensionTestCase
         $this->repeater->repeat($counter, $this->mockCallback);
     }
 
+    /** @test */
+    public function SkipsOverIterations_IfNodeIsSetNull()
+    {
+        // Setup
+        $counter = 6;
+        $callback = function ($i, &$node) {
+            if ($i % 2 == 0) {
+                $node = null;
+            } else {
+                $node->nodeValue = $i;
+            }
+        };
+
+        $dom = $this->createDOM('<root><item /></root>');
+        $expected = $this->createDOM('<root><item>1</item><item>3</item><item>5</item></root>');
+
+        $node = $dom->getElementsByTagName('item')->item(0);
+        $this->setTargetNode(array($node));
+
+        // Act
+        $this->repeater->repeat($counter, $callback);
+
+        // Assert
+        $this->assertDomEquals($expected, $dom);
+    }
+
     /**
      * @test
      * @dataProvider getTestParameters

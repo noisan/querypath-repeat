@@ -167,8 +167,13 @@ class RepeatExtension implements Extension
         foreach ($this->prepareCounter($counter) as $i) {
             $ins = $templateNode->cloneNode(true);
             // modify each clone
-            if ($callback and (call_user_func($callback, $i, $ins) === false)) {
+            if ($callback and (call_user_func_array($callback, array($i, &$ins)) === false)) {
                 break;
+            }
+
+            if (!$ins) {
+                // skip the current iteration if the callback has removed the cloned node
+                continue;
             }
 
             if (isset($templateNode->parentNode)) {

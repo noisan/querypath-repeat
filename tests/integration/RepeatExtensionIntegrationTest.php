@@ -334,6 +334,50 @@ class RepeatExtensionIntegrationTest extends \PHPUnit_Framework_TestCase
         $this->assertDomEqualsXmlString($expected, $qp);
     }
 
+    public function testRepeat_NodeUnset_SkipsIterations()
+    {
+        // Setup
+        $counter = 10;
+        $callback = function ($i, &$node) {
+            if ($i % 2 == 0) {
+                $node = null;
+            } else {
+                qp($node)->text($i);
+            }
+        };
+
+        $testXML = '<?xml version="1.0"?><root><i>Test</i></root>';
+        $expected = '<?xml version="1.0"?><root><i>1</i><i>3</i><i>5</i><i>7</i><i>9</i></root>';
+
+        // Act
+        $qp = qp($testXML)->find('i')->repeat($counter, $callback);
+
+        // Assert
+        $this->assertDomEqualsXmlString($expected, $qp);
+    }
+
+    public function testRepeatInner_NodeUnset_SkipsIterations()
+    {
+        // Setup
+        $counter = 10;
+        $callback = function ($i, &$node) {
+            if ($i % 2 == 0) {
+                $node = null;
+            } else {
+                qp($node)->text($i);
+            }
+        };
+
+        $testXML = '<?xml version="1.0"?><root><item>Test</item></root>';
+        $expected = '<?xml version="1.0"?><root><item>13579</item></root>';
+
+        // Act
+        $qp = qp($testXML)->find('item')->repeatInner($counter, $callback);
+
+        // Assert
+        $this->assertDomEqualsXmlString($expected, $qp);
+    }
+
     public function testRepeat_ReturnsQueryPathInstance()
     {
         // Setup

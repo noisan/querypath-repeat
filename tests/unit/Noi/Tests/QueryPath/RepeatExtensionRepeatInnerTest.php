@@ -183,6 +183,32 @@ class RepeatExtensionRepeatInnerTest extends RepeatExtensionTestCase
     }
 
     /** @test */
+    public function SkipsOverIterations_IfNodeIsSetNull()
+    {
+        // Setup
+        $counter = 6;
+        $callback = function ($i, &$node) {
+            if ($i % 2 == 0) {
+                $node = null;
+            } else {
+                $node->nodeValue = $i;
+            }
+        };
+
+        $dom = $this->createDOM('<root><item /></root>');
+        $expected = $this->createDOM('<root><item>135</item></root>');
+
+        $node = $dom->getElementsByTagName('item')->item(0);
+        $this->setTargetNode(array($node));
+
+        // Act
+        $this->repeater->repeatInner($counter, $callback);
+
+        // Assert
+        $this->assertDomEquals($expected, $dom);
+    }
+
+    /** @test */
     public function RepeatsChildrenOfRemovedNodes()
     {
         // Setup
